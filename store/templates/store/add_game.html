@@ -1,0 +1,58 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block title %}Добавление игры{% endblock %}
+
+{% block header %}
+<div class="pricing-header p-3 pb-md-4 mx-auto text-center" style="margin-top:50px;">
+    <h1 class=" display-6 fw-normal">Добавьте свою игру в каталог</h1>
+</div>
+{% endblock %}
+
+
+{% block content %}
+<div class="row text-start">
+    <div class="col-lg-10 col-md-6 col-sm-12 mx-auto">
+        <div class="card mb-4 box-shadow">
+            <div class="card-header">
+                <h4 class="my-0 font-weight-normal">Заполните поля</h4>
+            </div>
+            <div class="card-body">
+                <form method="post" enctype="multipart/form-data" action="" class="form-floating">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="title">Название</label>
+                        <input type="text" name="title" class="form-control" id="title" placeholder="Название игры"
+                               required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="description">Описание</label>
+                        <textarea type="text" name="description" class="form-control" id="description"
+                                  placeholder="Описание игры" required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="image" class="form-label">Изображение</label>
+                        <input class="form-control" type="file" name="image" id="image">
+                    </div>
+                    <div class="mb-3">
+                        <label for="category" class="form-label">Категория</label>
+                        <select class="form-select" aria-label="Default select example" name="category" id="category">
+                            <option selected>Выберите категорию</option>
+                            <option value="1">Для детей</option>
+                            <option value="2">Для взрослых</option>
+                            <option value="3">Для всей семьи</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="price">Цена</label>
+                        <input type="text" name="price" class="form-control" id="price"
+                               placeholder="Цена игры" required>
+                    </div>
+                    <button type="submit" class="btn btn-lg btn-block btn-outline-secondary">Отправить
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,32 @@
+{% extends 'store/base.html' %}
+{% load static %}
+{% load my_tags %}
+
+{% block title %}Подробности об игре{% endblock %}
+
+{% block content %}
+<div class="row row-cols-1 row-cols-md-3 mb-0 text-center" style="margin-top:100px;">
+    <div class="col">
+        <div class="card shadow-sm mx-auto d-block" style="width:900px">
+            <img class="img-responsive" width="300" src="{{ game.image | media_filter }}">
+            <div class="card-body border-top">
+                <h5 class="card-title">{{ game.title }}</h5>
+                <p class="card-text border-top">{{ game.description }}</p>
+                <p class="card-text border-top">Категория: {{game.category}}</p>
+                <p class="card-text border-top">Цена: {{ game.price }} руб.</p>
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="btn-group">
+                        {% if game.category.title == 'Для детей' %}
+                        <a href="{% url 'store:games_for_children' %}" type="button" class="btn btn-sm btn-outline-secondary">Назад</a>
+                        {% elif game.category.title == 'Для взрослых' %}
+                        <a href="{% url 'store:games_for_adults' %}" type="button" class="btn btn-sm btn-outline-secondary">Назад</a>
+                        {% elif game.category.title == 'Для всей семьи' %}
+                        <a href="{% url 'store:games_for_families' %}" type="button" class="btn btn-sm btn-outline-secondary">Назад</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
