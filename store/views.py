@@ -2,6 +2,7 @@ from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404
 from .models import Game, Address
 from add_game_script import add_game_script
+from django.core.files.storage import FileSystemStorage
 
 
 def home(request):
@@ -53,10 +54,14 @@ def contacts(request):
 
 
 def add_game(request):
-    if request.method == 'POST':
+    if request.method == 'POST' and request.FILES:
+        image = request.FILES['image']
+        fs = FileSystemStorage()
+        filename = fs.save(image.name, image)
+        file_url = fs.url(filename)
+
         title = request.POST.get('title')
         description = request.POST.get('description')
-        image = request.POST.get('image')
         category = request.POST.get('category')
         price = request.POST.get('price')
         game_dict = {
