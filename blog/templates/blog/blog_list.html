@@ -1,0 +1,37 @@
+{% extends 'blog/base.html' %}
+{% load static %}
+{% load my_tags %}
+
+{% block title %}Главная страница{% endblock %}
+
+{% block header %}
+<div class="pricing-header p-3 pb-md-4 mx-auto text-center" style="margin-top:50px;">
+    <h1 class=" display-6 fw-normal">Блог</h1>
+    <a class="btn btn-outline-primary" href="{% url 'blog:create' %}">Добавить статью</a>
+</div>
+{% endblock %}
+
+
+{% block content %}
+<div class="row row-cols-1 row-cols-md-3 mb-0 text-center">
+    {% for article in object_list %}
+    <div class="col">
+        <div class="card shadow-sm">
+            <img class="card-img-top" style="max-height:100%" src="{{ article.image | media_filter }}">
+            <div class="card-body border-top">
+                <h5 class="card-title">{{ article.title }}</h5>
+                <p class="card-text border-top">{{ article.content | truncatechars:100 }}</p>
+                <p class="card-text border-top">Количество просмотров: {{article.views_count}}</p>
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="btn-group">
+                        <a href="{% url 'blog:view' article.pk %}" type="button" class="btn btn-sm btn-outline-secondary">Подробнее</a>
+                        <a href="{% url 'blog:edit' article.pk %}" type="button" class="btn btn-sm btn-outline-secondary">Редактировать</a>
+                        <a href="{% url 'blog:delete' article.pk %}" type="button" class="btn btn-sm btn-outline-danger">Удалить</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
