@@ -1,77 +1,84 @@
-from django.http import HttpResponse
-from django.shortcuts import render, get_object_or_404
+from django.urls import reverse_lazy
+from django.views.generic import TemplateView, DetailView, ListView
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
+
 from .models import Game, Address
-from add_game_script import add_game_script
-from django.core.files.storage import FileSystemStorage
 
 
-def home(request):
-    games = Game.objects.all()[:3]
-    context = {'games': games}
-    return render(request, 'store/home.html', context)
+class HomeView(TemplateView):
+    template_name = 'store/home.html'
+
+    def get_context_data(self, **kwargs):
+        context_data = super().get_context_data(**kwargs)
+        context_data['object_list'] = Game.objects.all()[:3]
+        return context_data
 
 
-def game_details(request, game_id):
-    game = get_object_or_404(Game, pk=game_id)
-    context = {'game': game}
-    return render(request, 'store/game_details.html', context)
+class GameDetailView(DetailView):
+    model = Game
+    template_name = 'store/game_details.html'
+    context_object_name = "game"
 
 
-def games_for_children(request):
-    games = Game.objects.filter(category__title='Для детей')
-    context = {'games': games}
-    return render(request, 'store/for_children.html', context)
+class GameListView(ListView):
+    model = Game
+    template_name = 'store/all.html'
+    context_object_name = "games"
 
 
-def games_for_adults(request):
-    games = Game.objects.filter(category__title='Для взрослых')
-    context = {'games': games}
-    return render(request, 'store/for_adults.html', context)
+class GamesForChildrenListView(ListView):
+    model = Game
+    template_name = 'store/for_children.html'
+
+    def get_context_data(self, **kwargs):
+        context_data = super().get_context_data(**kwargs)
+        context_data['object_list'] = Game.objects.filter(category__title='Для детей')
+        return context_data
 
 
-def games_for_families(request):
-    games = Game.objects.filter(category__title='Для всей семьи')
-    context = {'games': games}
-    return render(request, 'store/for_families.html', context)
+class GamesForAdultsListView(ListView):
+    model = Game
+    template_name = 'store/for_adults.html'
+
+    def get_context_data(self, **kwargs):
+        context_data = super().get_context_data(**kwargs)
+        context_data['object_list'] = Game.objects.filter(category__title='Для взрослых')
+        return context_data
 
 
-def games_all(request):
-    games = Game.objects.all()
-    context = {'games': games}
-    return render(request, 'store/all.html', context)
+class GamesForFamiliesListView(ListView):
+    model = Game
+    template_name = 'store/for_families.html'
+
+    def get_context_data(self, **kwargs):
+        context_data = super().get_context_data(**kwargs)
+        context_data['object_list'] = Game.objects.filter(category__title='Для всей семьи')
+        return context_data
 
 
-def contacts(request):
-    address = Address.objects.first()
-    context = {'address': address}
-    if request.method == 'POST':
-        name = request.POST.get('name')
-        phone = request.POST.get('phone')
-        message = request.POST.get('message')
-        print(f'{name} ({phone}): {message}')
-        return HttpResponse(f"Спасибо, {name}! Ваше сообщение получено.")
-    return render(request, 'store/contacts.html', context)
+class ContactFormView(TemplateView):
+    model = Address
+    context_object_name = "address"
+    template_name = 'store/contacts.html'
+    success_url = reverse_lazy("store:contacts")
 
 
-def add_game(request):
-    if request.method == 'POST' and request.FILES:
-        image = request.FILES['image']
-        fs = FileSystemStorage()
-        filename = fs.save(image.name, image)
-        file_url = fs.url(filename)
+class GameCreateView(CreateView):
+    model = Game
+    fields = ['title', 'description', 'image', 'category', 'price']
+    template_name = 'store/add_game.html'
+    success_url = reverse_lazy('store:games_all')
 
-        title = request.POST.get('title')
-        description = request.POST.get('description')
-        category = request.POST.get('category')
-        price = request.POST.get('price')
-        game_dict = {
-            'title': title,
-            'description': description,
-            'image': image,
-            'category': category,
-            'price': price,
-        }
-        print(f'{title} ({category}): {price}')
-        add_game_script(game_dict)
-        return render(request, 'store/add_game.html')
-    return render(request, 'store/add_game.html')
+
+class GameUpdateView(UpdateView):
+    model = Game
+    fields = ['title', 'description', 'image', 'category', 'price']
+    template_name = 'store/add_game.html'
+    success_url = reverse_lazy('store:games_all')
+
+
+class GameDeleteView(DeleteView):
+    model = Game
+    fields = ['title', 'description', 'image', 'category', 'price']
+    template_name = 'store/delete_game.html'
+    success_url = reverse_lazy('store:games_all')
