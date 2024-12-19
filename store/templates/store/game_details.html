@@ -16,6 +16,8 @@
                 <p class="card-text border-top">Цена: {{ game.price }} руб.</p>
                 <div class="d-flex justify-content-between align-items-center">
                     <div class="btn-group">
+                        <a href="{% url 'store:update_game' game.pk %}" type="button" class="btn btn-sm btn-outline-secondary">Редактировать</a>
+                        <a href="{% url 'store:delete_game' game.pk %}" type="button" class="btn btn-sm btn-outline-danger">Удалить</a>
                         {% if game.category.title == 'Для детей' %}
                         <a href="{% url 'store:games_for_children' %}" type="button" class="btn btn-sm btn-outline-secondary">Назад</a>
                         {% elif game.category.title == 'Для взрослых' %}
