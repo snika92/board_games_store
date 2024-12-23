@@ -16,7 +16,7 @@ class HomeView(TemplateView):
 
 class GameDetailView(DetailView):
     model = Game
-    template_name = 'store/blog_detail.html'
+    template_name = 'store/game_details.html'
     context_object_name = "game"
 
 
@@ -66,18 +66,18 @@ class ContactFormView(TemplateView):
 class GameCreateView(CreateView):
     model = Game
     fields = ['title', 'description', 'image', 'category', 'price']
-    template_name = 'store/blog_form.html'
+    template_name = 'store/add_game.html'
     success_url = reverse_lazy('store:games_all')
 
 
 class GameUpdateView(UpdateView):
     model = Game
     fields = ['title', 'description', 'image', 'category', 'price']
-    template_name = 'store/blog_form.html'
+    template_name = 'store/add_game.html'
     success_url = reverse_lazy('store:games_all')
 
 
 class GameDeleteView(DeleteView):
     model = Game
-    template_name = 'store/blog_confirm_delete.html'
+    template_name = 'store/delete_game.html'
     success_url = reverse_lazy('store:games_all')
