@@ -1,11 +1,11 @@
 {% extends 'store/base.html' %}
 {% load static %}
 
-{% block title %}Добавление игры{% endblock %}
+{% block title %}Добавление статьи{% endblock %}
 
 {% block header %}
 <div class="pricing-header p-3 pb-md-4 mx-auto text-center" style="margin-top:50px;">
-    <h1 class=" display-6 fw-normal">Добавьте свою игру в каталог</h1>
+    <h1 class=" display-6 fw-normal">Добавьте статью</h1>
 </div>
 {% endblock %}
 
@@ -23,7 +23,7 @@
                     {{ form.as_p }}
                     <button type="submit" class="btn btn-lg btn-block btn-outline-primary">Отправить
                     </button>
-                    <a href="{% url 'blog:view' object.pk %}" class="btn btn-lg btn-block btn-outline-secondary">Отмена
+                    <a href="{% url 'blog:blog_list' %}" class="btn btn-lg btn-block btn-outline-secondary">Отмена
                     </a>
                 </form>
             </div>
