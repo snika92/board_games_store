@@ -4,6 +4,7 @@ from django.views.generic import ListView, DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.core.mail import send_mail
 
+from blog.forms import BlogForm
 from blog.models import Blog
 
 
@@ -34,13 +35,13 @@ class BlogDetailView(DetailView):
 
 class BlogCreateView(CreateView):
     model = Blog
-    fields = ['title', 'content', 'image', 'is_published']
+    form_class = BlogForm
     success_url = reverse_lazy('blog:blog_list')
 
 
 class BlogUpdateView(UpdateView):
     model = Blog
-    fields = ['title', 'content', 'image', 'is_published']
+    form_class = BlogForm
 
     # success_url = reverse_lazy('blog:edit')
 
