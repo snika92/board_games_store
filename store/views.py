@@ -2,6 +2,7 @@ from django.urls import reverse_lazy
 from django.views.generic import TemplateView, DetailView, ListView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 
+from .forms import GameForm
 from .models import Game, Address
 
 
@@ -65,14 +66,14 @@ class ContactFormView(TemplateView):
 
 class GameCreateView(CreateView):
     model = Game
-    fields = ['title', 'description', 'image', 'category', 'price']
+    form_class = GameForm
     template_name = 'store/add_game.html'
     success_url = reverse_lazy('store:games_all')
 
 
 class GameUpdateView(UpdateView):
     model = Game
-    fields = ['title', 'description', 'image', 'category', 'price']
+    form_class = GameForm
     template_name = 'store/add_game.html'
     success_url = reverse_lazy('store:games_all')
 
