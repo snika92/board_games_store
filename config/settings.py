@@ -135,3 +135,10 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+WHITELISTED_IMAGE_TYPES = {
+    'jpeg': 'image/jpeg',
+    'jpg': 'image/jpeg',
+    'png': 'image/png'
+}
+UPLOAD_FILE_MAX_SIZE = 5242880
