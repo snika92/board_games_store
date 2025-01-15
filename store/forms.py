@@ -22,7 +22,7 @@ class GameForm(StyleFormMixin, ModelForm):
         title = self.cleaned_data.get('title')
         lowered_title = list(map(lambda word: word.lower(), title.split()))
         if any(element in lowered_title for element in FORBIDDEN_WORDS):
-            raise ValidationError(f"Название не может содержать такое слово")
+            raise ValidationError("Название не может содержать такое слово")
         elif Game.objects.filter(title=title).exists():
             raise ValidationError('Игра с таким названием уже существует в каталоге')
         return title
@@ -31,7 +31,7 @@ class GameForm(StyleFormMixin, ModelForm):
         description = self.cleaned_data.get('description')
         lowered_description = list(map(lambda word: word.lower(), description.split()))
         if any(element in lowered_description for element in FORBIDDEN_WORDS):
-            raise ValidationError(f"Описание не может содержать такое слово")
+            raise ValidationError("Описание не может содержать такое слово")
         return description
 
     def clean_price(self):
