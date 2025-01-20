@@ -1,13 +1,13 @@
-{% extends 'blog/base.html' %}
+{% extends 'store/base.html' %}
 {% load static %}
-{% load my_tags %}
+{% load blog_tags %}
 
 {% block title %}Главная страница{% endblock %}
 
 {% block header %}
 <div class="pricing-header p-3 pb-md-4 mx-auto text-center" style="margin-top:50px;">
     <h1 class=" display-6 fw-normal">Блог</h1>
-    <a class="btn btn-outline-primary" href="{% url 'blog:create' %}">Добавить статью</a>
+    <a class="btn btn-outline-primary mt-3" href="{% url 'store:add_game' %}">Добавить статью</a>
 </div>
 {% endblock %}
 
@@ -17,7 +17,7 @@
     {% for article in object_list %}
     <div class="col">
         <div class="card shadow-sm">
-            <img class="card-img-top" style="max-height:100%" src="{{ article.image | media_filter }}">
+            <img class="card-img-top" style="max-height:100%" src="{{ article.image | media_filter_blog }}">
             <div class="card-body border-top">
                 <h5 class="card-title">{{ article.title }}</h5>
                 <p class="card-text border-top">{{ article.content | truncatechars:100 }}</p>
