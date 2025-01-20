@@ -12,6 +12,8 @@ psycopg2 = "^2.9.10"
 python-dotenv = "^1.0.1"
 pillow = "^11.0.0"
 ipython = "^8.30.0"
+django-phonenumber-field = "^8.0.0"
+django-phonenumbers = "^1.0.1"
 
 
 [build-system]
