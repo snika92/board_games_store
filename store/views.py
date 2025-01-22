@@ -1,6 +1,9 @@
+from django.http import HttpResponse
+from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, DetailView, ListView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 from .forms import GameForm
 from .models import Game, Address
@@ -59,26 +62,39 @@ class GamesForFamiliesListView(ListView):
 
 class ContactFormView(TemplateView):
     model = Address
-    context_object_name = "address"
     template_name = 'store/contacts.html'
-    success_url = reverse_lazy("store:contacts")
+    # context_object_name = "address"
+    # success_url = reverse_lazy("store:contacts")
+
+    def get(self, request):
+        address = Address.objects.first()
+        context = {'address': address}
+
+        return render(request, 'store/contacts.html', context)
+
+    def post(self, request):
+        name = request.POST.get('name')
+        phone = request.POST.get('phone')
+        message = request.POST.get('message')
+        print(f'{name} ({phone}): {message}')
+        return HttpResponse(f"Спасибо, {name}! Ваше сообщение получено.")
 
 
-class GameCreateView(CreateView):
+class GameCreateView(LoginRequiredMixin, CreateView):
     model = Game
     form_class = GameForm
     template_name = 'store/add_game.html'
     success_url = reverse_lazy('store:games_all')
 
 
-class GameUpdateView(UpdateView):
+class GameUpdateView(LoginRequiredMixin, UpdateView):
     model = Game
     form_class = GameForm
     template_name = 'store/add_game.html'
     success_url = reverse_lazy('store:games_all')
 
 
-class GameDeleteView(DeleteView):
+class GameDeleteView(LoginRequiredMixin, DeleteView):
     model = Game
     template_name = 'store/delete_game.html'
     success_url = reverse_lazy('store:games_all')
