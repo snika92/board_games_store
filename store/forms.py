@@ -1,4 +1,4 @@
-from django.forms import ModelForm
+from django.forms import ModelForm, BooleanField
 from django.core.exceptions import ValidationError
 from store.models import Game
 from django.conf import settings
@@ -10,7 +10,10 @@ class StyleFormMixin:
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         for field_name, field in self.fields.items():
-            field.widget.attrs['class'] = "form-control"
+            if isinstance(field, BooleanField):
+                field.widget.attrs['class'] = "form-check-input"
+            else:
+                field.widget.attrs['class'] = "form-control"
 
 
 class GameForm(StyleFormMixin, ModelForm):
