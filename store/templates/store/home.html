@@ -12,7 +12,9 @@
     <h1 class=" display-6 fw-normal">Добро пожаловать в наш магазин!</h1>
     {% endif %}
     <p class="fs-5 text-muted">Здесь вы можете выбрать настольную игру для любой компании.</p>
+    {% if user.is_authenticated %}
     <a class="btn btn-outline-primary mt-3" href="{% url 'store:add_game' %}">Добавить игру</a>
+    {% endif %}
 </div>
 {% endblock %}
 
@@ -38,6 +40,15 @@
                         {% endif %}
                     </div>
                 </div>
+                {% if "store.can_unpublish_product" in perms %}
+                {% if not game.description %}
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault"
+                           value="True">
+                    <label class="form-check-label" for="flexSwitchCheckDefault">Опубликовано</label>
+                </div>
+                {% endif %}
+                {% endif %}
             </div>
         </div>
     </div>
