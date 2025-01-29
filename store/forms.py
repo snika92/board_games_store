@@ -19,7 +19,7 @@ class StyleFormMixin:
 class GameForm(StyleFormMixin, ModelForm):
     class Meta:
         model = Game
-        exclude = ["created_at", "updated_at", "owner"]
+        exclude = ["created_at", "updated_at", "owner", "is_published"]
 
     def clean_title(self):
         title = self.cleaned_data.get('title')
@@ -52,3 +52,9 @@ class GameForm(StyleFormMixin, ModelForm):
             if not extension or extension.lower() not in settings.WHITELISTED_IMAGE_TYPES.keys():
                 raise ValidationError(f'Изображение может быть только в формате "png", "jpg", "jpeg"')
         return image
+
+
+class GameModeratorForm(StyleFormMixin, ModelForm):
+    class Meta:
+        model = Game
+        fields = ["is_published"]
