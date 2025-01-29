@@ -8,7 +8,7 @@
 <div class="pricing-header p-3 pb-md-4 mx-auto text-center" style="margin-top:50px;">
     <h1 class=" display-6 fw-normal">Все игры</h1>
     {% if user.is_authenticated %}
-    <a class="btn btn-outline-primary mt-3" href="{% url 'blog:create' %}">Добавить игру</a>
+    <a class="btn btn-outline-primary mt-3" href="{% url 'store:add_game' %}">Добавить игру</a>
     {% endif %}
 </div>
 {% endblock %}
@@ -16,6 +16,7 @@
 
 {% block content %}
 <div class="row row-cols-1 row-cols-md-3 mb-0 text-center">
+    {% if request.user|has_group:"moderators" %}
     {% for game in games %}
     <div class="col">
         <div class="card shadow-sm">
@@ -27,9 +28,17 @@
                     <div class="btn-group">
                         <a href="{% url 'store:game_details' game.pk %}" type="button"
                            class="btn btn-sm btn-outline-secondary">Подробнее</a>
-                        {% if user.is_authenticated %}
+                        {% if perms.store.can_unpublish_product and game.is_published == True %}
+                        <a href="{% url 'store:update_game' game.pk %}" type="button"
+                           class="btn btn-sm btn-outline-secondary">Отменить публикацию</a>
+                        {% elif perms.store.can_unpublish_product and game.is_published == False %}
+                        <a href="{% url 'store:update_game' game.pk %}" type="button"
+                           class="btn btn-sm btn-outline-secondary">Опубликовать</a>
+                        {% elif user == game.owner %}
                         <a href="{% url 'store:update_game' game.pk %}" type="button"
                            class="btn btn-sm btn-outline-secondary">Редактировать</a>
+                        {% endif %}
+                        {% if perms.store.delete_game or user == game.owner %}
                         <a href="{% url 'store:delete_game' game.pk %}" type="button"
                            class="btn btn-sm btn-outline-danger">Удалить</a>
                         {% endif %}
@@ -39,5 +48,41 @@
         </div>
     </div>
     {% endfor %}
+
+    {% else %}
+    {% for game in games %}
+    {% if game.is_published == True %}
+    <div class="col">
+        <div class="card shadow-sm">
+            <img class="card-img-top" width="300" src="{{ game.image | media_filter }}">
+            <div class="card-body border-top">
+                <h5 class="card-title">{{ game.title }}</h5>
+                <p class="card-text border-top">{{ game.description | truncatechars:100 }}</p>
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="btn-group">
+                        <a href="{% url 'store:game_details' game.pk %}" type="button"
+                           class="btn btn-sm btn-outline-secondary">Подробнее</a>
+                        {% if perms.store.can_unpublish_product and game.is_published == True %}
+                        <a href="{% url 'store:update_game' game.pk %}" type="button"
+                           class="btn btn-sm btn-outline-secondary">Отменить публикацию</a>
+                        {% elif perms.store.can_unpublish_product and game.is_published == False %}
+                        <a href="{% url 'store:update_game' game.pk %}" type="button"
+                           class="btn btn-sm btn-outline-secondary">Опубликовать</a>
+                        {% elif user == game.owner %}
+                        <a href="{% url 'store:update_game' game.pk %}" type="button"
+                           class="btn btn-sm btn-outline-secondary">Редактировать</a>
+                        {% endif %}
+                        {% if perms.store.delete_game or user == game.owner %}
+                        <a href="{% url 'store:delete_game' game.pk %}" type="button"
+                           class="btn btn-sm btn-outline-danger">Удалить</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    {% endfor %}
+    {% endif %}
 </div>
 {% endblock %}

@@ -32,23 +32,19 @@
                     <div class="btn-group">
                         <a href="{% url 'store:game_details' game.pk %}" type="button"
                            class="btn btn-sm btn-outline-secondary">Подробнее</a>
-                        {% if user.is_authenticated %}
+                        {% if perms.store.can_unpublish_product %}
+                        <a href="{% url 'store:update_game' game.pk %}" type="button"
+                           class="btn btn-sm btn-outline-secondary">Отменить публикацию</a>
+                        {% elif user == game.owner %}
                         <a href="{% url 'store:update_game' game.pk %}" type="button"
                            class="btn btn-sm btn-outline-secondary">Редактировать</a>
+                        {% endif %}
+                        {% if perms.store.delete_game or user == game.owner %}
                         <a href="{% url 'store:delete_game' game.pk %}" type="button"
                            class="btn btn-sm btn-outline-danger">Удалить</a>
                         {% endif %}
                     </div>
                 </div>
-                {% if "store.can_unpublish_product" in perms %}
-                {% if not game.description %}
-                <div class="form-check form-switch">
-                    <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault"
-                           value="True">
-                    <label class="form-check-label" for="flexSwitchCheckDefault">Опубликовано</label>
-                </div>
-                {% endif %}
-                {% endif %}
             </div>
         </div>
     </div>
