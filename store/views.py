@@ -2,10 +2,13 @@ from django.core.exceptions import PermissionDenied
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse_lazy
+from django.views.decorators.cache import cache_page
+from django.utils.decorators import method_decorator
 from django.views.generic import TemplateView, DetailView, ListView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin
 
+from .services import GameService
 from .forms import GameForm, GameModeratorForm
 from .models import Game, Address
 
@@ -19,6 +22,7 @@ class HomeView(TemplateView):
         return context_data
 
 
+@method_decorator(cache_page(60*15), name='dispatch')
 class GameDetailView(DetailView):
     model = Game
     template_name = 'store/game_details.html'
@@ -36,8 +40,7 @@ class GamesForChildrenListView(ListView):
     template_name = 'store/for_children.html'
 
     def get_queryset(self, *args, **kwargs):
-        queryset = super().get_queryset(*args, **kwargs)
-        queryset = queryset.filter(category__title='Для детей')
+        queryset = GameService.get_list_of_games_by_category('Для детей')
         return queryset
 
 
@@ -46,8 +49,7 @@ class GamesForAdultsListView(ListView):
     template_name = 'store/for_adults.html'
 
     def get_queryset(self, *args, **kwargs):
-        queryset = super().get_queryset(*args, **kwargs)
-        queryset = queryset.filter(category__title='Для взрослых')
+        queryset = GameService.get_list_of_games_by_category('Для взрослых')
         return queryset
 
 
@@ -56,8 +58,7 @@ class GamesForFamiliesListView(ListView):
     template_name = 'store/for_families.html'
 
     def get_queryset(self, *args, **kwargs):
-        queryset = super().get_queryset(*args, **kwargs)
-        queryset = queryset.filter(category__title='Для всей семьи')
+        queryset = GameService.get_list_of_games_by_category('Для всей семьи')
         return queryset
 
 
