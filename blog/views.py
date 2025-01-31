@@ -1,5 +1,7 @@
 # from django.shortcuts import render, redirect
 from django.urls import reverse_lazy, reverse
+from django.views.decorators.cache import cache_page
+from django.utils.decorators import method_decorator
 from django.views.generic import ListView, DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.core.mail import send_mail
@@ -18,6 +20,7 @@ class BlogListView(ListView):
         return queryset
 
 
+@method_decorator(cache_page(60*15), name='dispatch')
 class BlogDetailView(DetailView):
     model = Blog
 
