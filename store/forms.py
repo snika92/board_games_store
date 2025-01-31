@@ -1,4 +1,4 @@
-from django.forms import ModelForm
+from django.forms import ModelForm, BooleanField
 from django.core.exceptions import ValidationError
 from store.models import Game
 from django.conf import settings
@@ -10,13 +10,16 @@ class StyleFormMixin:
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         for field_name, field in self.fields.items():
-            field.widget.attrs['class'] = "form-control"
+            if isinstance(field, BooleanField):
+                field.widget.attrs['class'] = "form-check-input"
+            else:
+                field.widget.attrs['class'] = "form-control"
 
 
 class GameForm(StyleFormMixin, ModelForm):
     class Meta:
         model = Game
-        exclude = ["created_at", "updated_at"]
+        exclude = ["created_at", "updated_at", "owner", "is_published"]
 
     def clean_title(self):
         title = self.cleaned_data.get('title')
@@ -42,9 +45,16 @@ class GameForm(StyleFormMixin, ModelForm):
 
     def clean_image(self):
         image = self.cleaned_data.get('image')
-        extension = image.name.split('.')[-1]
         if image and image.size > settings.UPLOAD_FILE_MAX_SIZE:
             raise ValidationError(f"Размер изображения не должен превышать 5 МБ ")
-        elif not extension or extension.lower() not in settings.WHITELISTED_IMAGE_TYPES.keys():
-            raise ValidationError(f'Изображение может быть только в формате "png", "jpg", "jpeg"')
+        if image:
+            extension = image.name.split('.')[-1]
+            if not extension or extension.lower() not in settings.WHITELISTED_IMAGE_TYPES.keys():
+                raise ValidationError(f'Изображение может быть только в формате "png", "jpg", "jpeg"')
         return image
+
+
+class GameModeratorForm(StyleFormMixin, ModelForm):
+    class Meta:
+        model = Game
+        fields = ["is_published"]

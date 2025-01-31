@@ -9,5 +9,5 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         Category.objects.all().delete()
         Game.objects.all().delete()
-        call_command('loaddata', 'store_fixture.json')
+        call_command('loaddata', 'store_new_fixture.json')
         self.stdout.write(self.style.SUCCESS('Successfully loaded data from fixture'))

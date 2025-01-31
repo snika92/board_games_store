@@ -1,11 +1,12 @@
+from django.core.exceptions import PermissionDenied
 from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, DetailView, ListView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin
 
-from .forms import GameForm
+from .forms import GameForm, GameModeratorForm
 from .models import Game, Address
 
 
@@ -14,7 +15,7 @@ class HomeView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context_data = super().get_context_data(**kwargs)
-        context_data['object_list'] = Game.objects.all()[:3]
+        context_data['object_list'] = Game.objects.filter(is_published=True).all()[:3]
         return context_data
 
 
@@ -86,6 +87,13 @@ class GameCreateView(LoginRequiredMixin, CreateView):
     template_name = 'store/add_game.html'
     success_url = reverse_lazy('store:games_all')
 
+    def form_valid(self, form):
+        game = form.save()
+        user = self.request.user
+        game.owner = user
+        game.save()
+        return super().form_valid(form)
+
 
 class GameUpdateView(LoginRequiredMixin, UpdateView):
     model = Game
@@ -93,8 +101,24 @@ class GameUpdateView(LoginRequiredMixin, UpdateView):
     template_name = 'store/add_game.html'
     success_url = reverse_lazy('store:games_all')
 
+    def get_form_class(self):
+        user = self.request.user
+        if user == self.object.owner:
+            return GameForm
+        if user.has_perm('store.can_unpublish_product'):
+            return GameModeratorForm
+        raise PermissionDenied
+
 
 class GameDeleteView(LoginRequiredMixin, DeleteView):
     model = Game
     template_name = 'store/delete_game.html'
     success_url = reverse_lazy('store:games_all')
+
+    def delete(self, request, pk):
+        game = get_object_or_404(Game, id=pk)
+        if not request.user.has_perm('store.delete_product') and not request.user == game.owner:
+            raise PermissionDenied
+
+        game.delete()
+        # return redirect("store:games_all")

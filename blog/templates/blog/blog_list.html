@@ -7,7 +7,9 @@
 {% block header %}
 <div class="pricing-header p-3 pb-md-4 mx-auto text-center" style="margin-top:50px;">
     <h1 class=" display-6 fw-normal">Блог</h1>
-    <a class="btn btn-outline-primary mt-3" href="{% url 'store:add_game' %}">Добавить статью</a>
+    {% if request.user|has_group:"content managers" %}
+    <a class="btn btn-outline-primary mt-3" href="{% url 'blog:create' %}">Добавить статью</a>
+    {% endif %}
 </div>
 {% endblock %}
 
@@ -25,7 +27,7 @@
                 <div class="d-flex justify-content-between align-items-center">
                     <div class="btn-group">
                         <a href="{% url 'blog:view' article.pk %}" type="button" class="btn btn-sm btn-outline-secondary">Подробнее</a>
-                        {% if user.is_authenticated %}
+                        {% if request.user|has_group:"content managers" %}
                         <a href="{% url 'blog:edit' article.pk %}" type="button" class="btn btn-sm btn-outline-secondary">Редактировать</a>
                         <a href="{% url 'blog:delete' article.pk %}" type="button" class="btn btn-sm btn-outline-danger">Удалить</a>
                         {% endif %}

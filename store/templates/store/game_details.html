@@ -16,9 +16,19 @@
                 <p class="card-text border-top">Цена: {{ game.price }} руб.</p>
                 <div class="d-flex justify-content-between align-items-center">
                     <div class="btn-group">
-                        {% if user.is_authenticated %}
-                        <a href="{% url 'store:update_game' game.pk %}" type="button" class="btn btn-sm btn-outline-secondary">Редактировать</a>
-                        <a href="{% url 'store:delete_game' game.pk %}" type="button" class="btn btn-sm btn-outline-danger">Удалить</a>
+                        {% if perms.store.can_unpublish_product and game.is_published == True %}
+                        <a href="{% url 'store:update_game' game.pk %}" type="button"
+                           class="btn btn-sm btn-outline-secondary">Отменить публикацию</a>
+                        {% elif perms.store.can_unpublish_product and game.is_published == False %}
+                        <a href="{% url 'store:update_game' game.pk %}" type="button"
+                           class="btn btn-sm btn-outline-secondary">Опубликовать</a>
+                        {% elif user == game.owner %}
+                        <a href="{% url 'store:update_game' game.pk %}" type="button"
+                           class="btn btn-sm btn-outline-secondary">Редактировать</a>
+                        {% endif %}
+                        {% if perms.store.delete_game or user == game.owner %}
+                        <a href="{% url 'store:delete_game' game.pk %}" type="button"
+                           class="btn btn-sm btn-outline-danger">Удалить</a>
                         {% endif %}
                         {% if game.category.title == 'Для детей' %}
                         <a href="{% url 'store:games_for_children' %}" type="button" class="btn btn-sm btn-outline-secondary">Назад</a>

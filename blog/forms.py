@@ -40,6 +40,8 @@ class BlogForm(StyleFormMixin, ModelForm):
         extension = image.name.split('.')[-1]
         if image and image.size > settings.UPLOAD_FILE_MAX_SIZE:
             raise ValidationError("Размер изображения не должен превышать 5 МБ ")
-        elif not extension or extension.lower() not in settings.WHITELISTED_IMAGE_TYPES.keys():
-            raise ValidationError('Изображение может быть только в формате "png", "jpg", "jpeg"')
+        if image:
+            extension = image.name.split('.')[-1]
+            if not extension or extension.lower() not in settings.WHITELISTED_IMAGE_TYPES.keys():
+                raise ValidationError('Изображение может быть только в формате "png", "jpg", "jpeg"')
         return image
