@@ -35,6 +35,13 @@ class GameListView(ListView):
     template_name = 'store/all.html'
     context_object_name = "games"
 
+    def get_queryset(self, *args, **kwargs):
+        queryset = cache.get('all_games_queryset')
+        if not queryset:
+            queryset = super().get_queryset()
+            cache.set('all_games_queryset', queryset, 60*15)
+        return queryset
+
 
 class GamesForChildrenListView(ListView):
     model = Game
